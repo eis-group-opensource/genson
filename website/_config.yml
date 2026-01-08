@@ -1,0 +1,10 @@
+name: "Genson"
+description: "Fast & easy to use Java <> Json library"
+
+markdown: kramdown
+highlighter: pygments
+permalink: pretty
+
+baseurl: /genson
+latest_version: 0.99
+production: false

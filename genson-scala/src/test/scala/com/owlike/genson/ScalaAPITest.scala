@@ -1,0 +1,66 @@
+package com.owlike.genson
+
+import org.scalatest.FunSuite
+import org.scalatest.Matchers
+import java.net.URL
+import java.util.Date
+import java.text.SimpleDateFormat
+
+import defaultGenson._
+
+class ScalaAPITest extends FunSuite with Matchers {
+  val df = new SimpleDateFormat("yyyy-MM-dd")
+  val genson = new GensonBuilder().withBundle(ScalaBundle()).useDateFormat(df).create()
+
+  test("type inference with Tuples") {
+    val (date, url) = genson.fromJson[(Date, URL)]("[\"2014-12-01\", \"http://www.google.com\"]")
+
+    date shouldEqual df.parse("2014-12-01")
+    url.toString shouldEqual "http://www.google.com"
+  }
+
+  test("type inference with List") {
+    val List(url) = fromJson[List[URL]]("[\"http://www.google.com\"]")
+
+    url.toString shouldEqual "http://www.google.com"
+  }
+
+  test("type inference with Map") {
+    val map = genson.fromJson[Map[String, Set[URL]]]("{\"k1\": [\"http://www.google.com\"]}")
+
+    map("k1").head shouldEqual new URL("http://www.google.com")
+  }
+
+  test("type inference of Map with Int key") {
+    val map = genson.fromJson[Map[Int, Int]]("{\"1\": 2}")
+    map(1) shouldEqual 2
+  }
+
+  test("type inference of tuple of Map with Int key") {
+    val (map, intValue) = genson.fromJson[(Map[Int, Int], Int)]("[{\"1\": 2}, 3]")
+    map(1) shouldEqual 2
+    intValue shouldEqual 3
+  }
+
+  test("round trip Map with Optional values") {
+    val map = genson.fromJson[Map[Int, Option[String]]]("{\"1\": null, \"2\": \"foo bar\"}")
+    map(1) shouldEqual None
+    map(2) shouldEqual Some("foo bar")
+  }
+
+  test("deserialize to unknown type") {
+    fromJson[Map[String, Option[Any]]]("""{"name":"foo bar", "age": 28, "address":null}""") match {
+      case map: Map[String, Option[Any]] =>
+        map should be (Map("name" -> Some("foo bar"), "age" -> Some(28), "address" -> None))
+      case _ => fail()
+    }
+  }
+
+  test("serialize None") {
+    fromJson[Option[_]](toJson(None)) should be (None)
+  }
+
+  test("deserialize to None missing option in the incoming json") {
+    fromJson[GenericHolder[Option[String]]]("{}").v should be (None)
+  }
+}

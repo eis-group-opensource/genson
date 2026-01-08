@@ -1,0 +1,20 @@
+Copyright 2011-2014 Genson - Cepoi Eugen
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Original project: Genson - https://github.com/owlike/genson
+
+------------------------------------------------------------------
+Modifications made by EIS Group:
+- Updated Genson library to fix concurrency issue.
+- Make genson jdk8 compatible, embed guava 18.0
+- Removed json-api override, fixed Genson to not include JsonProvider.
+- Java 21 support 
+- Java 25 support
+
+https://github.com/eis-group-opensource/genson
